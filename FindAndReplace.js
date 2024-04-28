@@ -83,7 +83,7 @@ function findAndReplace(watch, filters) {
             filter = filters[filter];
 
             // Check that 'filter.regex' and 'filter.replace' are the correct types, otherwise skip
-            if (filter.regex instanceof RegExp === false || typeof filter.replace === 'string' === false) continue;
+            if (filter.regex instanceof RegExp === false || (typeof filter.replace === 'string' === false && typeof filter.replace === 'function' === false)) continue;
 
             // Isolate all text nodes in 'watch', filter only matches with 'filter.regex' and store as 'matches'
             let matches = allText.filter(item => validateRegex(filter.regex, item));
