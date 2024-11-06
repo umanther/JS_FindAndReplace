@@ -1,5 +1,5 @@
 let farPair = (function() {
-    // Returns a utility function to assiste with pair formatting.
+    // Returns a utility function to assist with pair formatting.
     // Used by calling: farPair.set(/<regex statement>/g, '<replace string>')
     // Returns a formatted dictionary that can be passed to findAndReplace() as a filter.
 
@@ -26,7 +26,7 @@ function findAndReplace(watch, filters) {
         filters = Array(filters);
     }
 
-    let simTicketMutationObserver = new MutationObserver(mutations => {
+    let mutationObserver = new MutationObserver(mutations => {
         // Mutation observer anonymous function
 
         function deepText(node) {
@@ -42,7 +42,7 @@ function findAndReplace(watch, filters) {
                 while (node != null) {
                     // If 'node' is a text node, add it to the output
                     if (node.nodeType == 3) A.push(node);
-                    // Test for children of 'node' and add results to ouput
+                    // Test for children of 'node' and add results to output
                     else A = A.concat(deepText(node));
                     // Move to nextSibling of 'node'
                     node = node.nextSibling;
@@ -59,13 +59,13 @@ function findAndReplace(watch, filters) {
 
             // Create a deep clone of 'target' to keep from deforming the page
             target = target.cloneNode(true);
-            // Create temporary div to hold 'target' if target is a text node
+            // Create a temporary div to hold 'target' if the target is a text node
             let temp = document.createElement('div');
             if (target.nodeType == 3) {
                 temp.append(target);
                 target = temp;
             }
-            // Get array of text nodes in 'target'
+            // Get the array of text nodes in 'target'
             let textToValidate = deepText(target);
             // Loop through text nodes and return 'true' if any 'regex' matches are found ...
             for (let text in textToValidate) {
@@ -97,24 +97,24 @@ function findAndReplace(watch, filters) {
                 // Make 'regex' changes
                 temp.innerHTML = match.data.replaceAll(filter.regex, filter.replace);
 
-                // Test resulting change to look for an infinate loop scenario
+                // Test resulting change to look for an infinite loop scenario
                 if (validateRegex(filter.regex, temp)) {
-                    console.log(`Infinate loop detected.  Aborting replace... \nBad filter:\n\t         Regex: ${filter.regex}\n\tReplace String: ${filter.replace}`);
+                    console.log(`Infinite loop detected.  Aborting replace... \nBad filter:\n\t         Regex: ${filter.regex}\n\tReplace String: ${filter.replace}`);
                     return;
                 }
 
-                // Move child elments of temprary 'div' into document at match location
+                // Move child elements of temporary 'div' into the document at match location
                 while (temp.firstChild) {
                     match.parentNode.insertBefore(temp.firstChild, match);
                 }
-                // Remove original text node  !!! Failing to do this will create an infinate loop !!!
+                // Remove the original text node  !!! Failing to do this will create an infinite loop !!!
                 match.remove();
             }
         }
     });
 
     // Create mutation observer to look at 'watch' for updates
-    simTicketMutationObserver.observe(watch, {
+    mutationObserver.observe(watch, {
         childList: true,
         subtree: true,
         characterData: true
